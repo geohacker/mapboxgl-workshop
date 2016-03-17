@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8' />
+    <title>Bus Stop Finder</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.15.0/mapbox-gl.js'></script>
+    <script src='data/busstops.2015.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.15.0/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        body { margin:0; padding:0; }
+        #map { position:absolute; top:0; bottom:0; width:100%; }
+    </style>
+</head>
+<body>
+
+<div id='map'></div>
+<script>
+mapboxgl.accessToken = 'pk.eyJ1IjoiZ2VvaGFja2VyIiwiYSI6ImFIN0hENW8ifQ.GGpH9gLyEg0PZf3NPQ7Vrg';
+var map = new mapboxgl.Map({
+    container: 'map', // container id
+    style: 'mapbox://styles/mapbox/streets-v8', //stylesheet location
+    center: [77.5912997, 12.9791198], // starting position
+    zoom: 11 // starting zoom
+});
+
+// Define bus stops data source
+var stopSource = {
+    "type": "geojson",
+    "data": stops
+};
+
+// Create a layer from the data source
+var stopsLayer = {
+    "id": "stops",
+    "source": "stops",
+    "type": "circle",
+    "paint": {
+        "circle-radius": 2,
+        "circle-color": "black"
+    }
+};
+
+// When the map is ready, add the layer.
+map.on('style.load', function () {
+    map.addSource("stops", stopSource);
+    map.addLayer(stopsLayer);
+});
+
+
+</script>
+
+</body>
+</html>
+
