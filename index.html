@@ -5,6 +5,7 @@
     <title>Bus Stop Finder</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.15.0/mapbox-gl.js'></script>
+    <script src='//api.tiles.mapbox.com/mapbox.js/plugins/turf/v2.0.0/turf.min.js'></script>
     <script src='data/busstops.2015.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.15.0/mapbox-gl.css' rel='stylesheet' />
     <style>
@@ -21,7 +22,8 @@ var map = new mapboxgl.Map({
     container: 'map', // container id
     style: 'mapbox://styles/mapbox/streets-v8', //stylesheet location
     center: [77.5912997, 12.9791198], // starting position
-    zoom: 11 // starting zoom
+    zoom: 11, // starting zoom
+    hash: true
 });
 
 // Define bus stops data source
@@ -47,7 +49,37 @@ map.on('style.load', function () {
     map.addLayer(stopsLayer);
 });
 
+// Setup click handler
+map.on('click', function (e) {
 
+    if (map.getLayer('buffer')) {
+        map.removeLayer('buffer');
+        map.removeSource('buffer');
+    }
+    // Create a point object
+    var point = turf.point([e.lngLat.lng, e.lngLat.lat]);
+
+    // Get the 1km buffer
+    var buffer = turf.buffer(point, 1, 'kilometers');
+
+    var bufferSource = {
+        "type": "geojson",
+        "data": buffer
+    };
+
+    var bufferLayer = {
+        "id": "buffer",
+        "source": "buffer",
+        "type": "fill",
+        "paint": {
+            "fill-color": "black",
+            "fill-opacity": 0.5
+        }
+    };
+
+    map.addSource("buffer", bufferSource);
+    map.addLayer(bufferLayer);
+});
 </script>
 
 </body>
