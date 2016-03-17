@@ -38,15 +38,27 @@ var stopsLayer = {
     "source": "stops",
     "type": "circle",
     "paint": {
-        "circle-radius": 2,
+        "circle-radius": 4,
         "circle-color": "black"
     }
+};
+
+var stopsInnerLayer = {
+    "id": "stopsInner",
+    "source": "stops",
+    "type": "circle",
+    "paint": {
+        "circle-radius": 2,
+        "circle-color": "white"
+    },
+    "filter": ["==", "name", ""]
 };
 
 // When the map is ready, add the layer.
 map.on('style.load', function () {
     map.addSource("stops", stopSource);
     map.addLayer(stopsLayer);
+    map.addLayer(stopsInnerLayer);
 });
 
 // Setup click handler
@@ -73,13 +85,27 @@ map.on('click', function (e) {
         "type": "fill",
         "paint": {
             "fill-color": "black",
-            "fill-opacity": 0.5
+            "fill-opacity": 0.2
         }
     };
 
     map.addSource("buffer", bufferSource);
     map.addLayer(bufferLayer);
+
+    findStops(buffer);
 });
+
+function findStops(buffer) {
+
+    // Find all the stops in the buffer
+    var stopsWithin = turf.within(stops, buffer);
+    var filters = ["any"];
+    stopsWithin.features.forEach(function(stop) {
+        filters.push(["==", "name", stop.properties.name]);
+    });
+
+    map.setFilter("stopsInner", filters);
+}
 </script>
 
 </body>
