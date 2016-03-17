@@ -38,9 +38,9 @@ var stopsLayer = {
     "source": "stops",
     "type": "circle",
     "paint": {
-        "circle-radius": 4,
+        "circle-radius": 2,
         "circle-color": "black"
-    }
+    },
 };
 
 var stopsInnerLayer = {
@@ -48,8 +48,10 @@ var stopsInnerLayer = {
     "source": "stops",
     "type": "circle",
     "paint": {
-        "circle-radius": 2,
-        "circle-color": "white"
+        "circle-radius": 6,
+        "circle-color": "red",
+        "circle-opacity": 0.6,
+        "circle-blur": 0.8
     },
     "filter": ["==", "name", ""]
 };
@@ -85,7 +87,7 @@ map.on('click', function (e) {
         "type": "fill",
         "paint": {
             "fill-color": "black",
-            "fill-opacity": 0.2
+            "fill-opacity": 0.1
         }
     };
 
