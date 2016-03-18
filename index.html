@@ -4,19 +4,39 @@
     <meta charset='utf-8' />
     <title>Bus Stop Finder</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script> 
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.15.0/mapbox-gl.js'></script>
     <script src='//api.tiles.mapbox.com/mapbox.js/plugins/turf/v2.0.0/turf.min.js'></script>
     <script src='data/stops.js'></script>
     <script src='data/destinations.js'></script>
+    <link href='https://www.mapbox.com/base/latest/base.css' rel='stylesheet' />
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.15.0/mapbox-gl.css' rel='stylesheet' />
     <style>
         body { margin:0; padding:0; }
         #map { position:absolute; top:0; bottom:0; width:100%; }
+        #info {
+            z-index: 1;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
     </style>
 </head>
 <body>
 
 <div id='map'></div>
+<div id='info' class='box round fill-gray pad1 col4'>
+    <div class="keyline-bottom space-bottom1">
+        <h3 class="fancy time">BMTC Bus Stop Finder</h3>
+    </div>
+    <!-- <span class="pad1y"><a href="https://en.wikipedia.org/wiki/Bangalore_Metropolitan_Transport_Corporation">Bangalore Metropolitan Transport Corporation</a></span> -->
+    <ul id='stoplist'>
+    </ul>
+    <div class="keyline-top">
+        <span class="quiet small"><a href="http://openbangalore.org/">Data CC-BY-SA Open Bangalore.</a></span>
+    </div>
+</div>
+
 <script>
 mapboxgl.accessToken = 'pk.eyJ1IjoiZ2VvaGFja2VyIiwiYSI6ImFIN0hENW8ifQ.GGpH9gLyEg0PZf3NPQ7Vrg';
 var map = new mapboxgl.Map({
@@ -181,7 +201,11 @@ function findStops(buffer) {
     // Find all the stops in the buffer
     var stopsWithin = turf.within(stops, buffer);
     var filters = ["any"];
+    var stopsList = $('#stoplist');
     stopsWithin.features.forEach(function(stop) {
+        var li = $('<li/>').appendTo(stopsList);
+        var h4 = $('<h4/>').appendTo(li);
+        var entry = $('<span/>').text(stop.properties.name.split(',')[0]).appendTo(h4);
         filters.push(["==", "name", stop.properties.name]);
     });
 
@@ -200,6 +224,9 @@ function clear() {
     map.setFilter("destinationsLabel", ["==", "name", ""]);
     map.setFilter("destinations", ["==", "name", ""]);
     map.setFilter("stopsInner", ["==", "name", ""]);
+
+    // Clear stop list
+    $('li').remove();
 }
 
 </script>
