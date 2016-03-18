@@ -140,8 +140,8 @@ function showStops(e) {
     }
 
     // Clear destination lines and labels if any
-    map.setFilter("destinations", ["==", "name", ""]);
     map.setFilter("destinationsLabel", ["==", "name", ""]);
+    map.setFilter("destinations", ["==", "name", ""]);
 
     // Create a point object
     var point = turf.point([e.lngLat.lng, e.lngLat.lat]);
