@@ -25,14 +25,14 @@
 <body>
 
 <div id='map'></div>
-<div id='info' class='box round fill-white pad1 col3'>
+<div id='info' class='box round fill-gray pad1 col4'>
     <div class="keyline-bottom space-bottom1">
         <h3 class="fancy time">BMTC Bus Stop Finder</h3>
     </div>
     <!-- <span class="pad1y"><a href="https://en.wikipedia.org/wiki/Bangalore_Metropolitan_Transport_Corporation">Bangalore Metropolitan Transport Corporation</a></span> -->
     <ul id='stoplist'>
     </ul>
-    <div class="">
+    <div class="keyline-top">
         <span class="quiet small"><a href="http://openbangalore.org/">Data CC-BY-SA Open Bangalore.</a></span>
     </div>
 </div>
@@ -125,19 +125,6 @@ var destinationsLabel = {
     "filter": ["==", "name", ""]
 };
 
-var stopsLabel = {
-    "id": "stopsLabel",
-    "type": "symbol",
-    "source": "stops",
-    "layout": {
-        "text-anchor": "left",
-        "text-field": "{name}",
-        "text-size": 10,
-        "text-justify": "left"
-    },
-    "filter": ["==", "name", ""]
-};
-
 // When the map is ready, add the layer.
 map.on('style.load', function () {
     map.addSource("stops", stopsSource);
@@ -146,7 +133,6 @@ map.on('style.load', function () {
     map.addSource("destinations", destinationsSource);
     map.addLayer(destinationsLayer);
     map.addLayer(destinationsLabel);
-    map.addLayer(stopsLabel);
 });
 
 // Setup click handler
@@ -224,7 +210,6 @@ function findStops(buffer) {
     });
 
     map.setFilter("stopsInner", filters);
-    map.setFilter("stopsLabel", filters);
 }
 
 function clear() {
