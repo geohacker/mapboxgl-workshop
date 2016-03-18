@@ -7,6 +7,7 @@
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.15.0/mapbox-gl.js'></script>
     <script src='//api.tiles.mapbox.com/mapbox.js/plugins/turf/v2.0.0/turf.min.js'></script>
     <script src='data/busstops.2015.js'></script>
+    <script src='data/destinations.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.15.0/mapbox-gl.css' rel='stylesheet' />
     <style>
         body { margin:0; padding:0; }
@@ -27,7 +28,7 @@ var map = new mapboxgl.Map({
 });
 
 // Define bus stops data source
-var stopSource = {
+var stopsSource = {
     "type": "geojson",
     "data": stops
 };
@@ -38,9 +39,10 @@ var stopsLayer = {
     "source": "stops",
     "type": "circle",
     "paint": {
-        "circle-radius": 2,
+        "circle-radius": 3,
         "circle-color": "black"
     },
+    "interactive": true
 };
 
 var stopsInnerLayer = {
@@ -48,7 +50,7 @@ var stopsInnerLayer = {
     "source": "stops",
     "type": "circle",
     "paint": {
-        "circle-radius": 6,
+        "circle-radius": 10,
         "circle-color": "red",
         "circle-opacity": 0.6,
         "circle-blur": 0.8
@@ -56,20 +58,66 @@ var stopsInnerLayer = {
     "filter": ["==", "name", ""]
 };
 
+// Create destinations source
+var destinationsSource = {
+    "type": "geojson",
+    "data": destinations
+};
+
+// Create destinations layer
+var destinationsLayer = {
+    "id": "destinations",
+    "type": "line",
+    "source": "destinations",
+    "layout": {
+        "line-join": "round",
+        "line-cap": "round"
+    },
+    "paint": {
+        "line-color": "black",
+        "line-width": 1,
+        "line-opacity": 0.8,
+        "line-blur": 1
+    },
+    "filter": ["==", "name", ""]
+};
+
+
 // When the map is ready, add the layer.
 map.on('style.load', function () {
-    map.addSource("stops", stopSource);
+    map.addSource("stops", stopsSource);
     map.addLayer(stopsLayer);
     map.addLayer(stopsInnerLayer);
+    map.addSource("destinations", destinationsSource);
+    map.addLayer(destinationsLayer);
 });
 
 // Setup click handler
 map.on('click', function (e) {
 
+    map.featuresAt(e.point, {
+        radius: 5,
+        layer: ["stops"]
+    }, function (err, features) {
+        if (!err && features.length) {
+            map.setFilter("destinations", ["==", "name", features[0].properties.name]);
+        } else {
+            showStops(e);
+        }
+    });
+});
+
+function showStops(e) {
+
+    // Clear previous buffer if any
     if (map.getLayer('buffer')) {
         map.removeLayer('buffer');
         map.removeSource('buffer');
     }
+
+    // Clear destination lines if any
+    map.setFilter("destinations", ["==", "name", ""]);
+
     // Create a point object
     var point = turf.point([e.lngLat.lng, e.lngLat.lat]);
 
@@ -95,7 +143,7 @@ map.on('click', function (e) {
     map.addLayer(bufferLayer);
 
     findStops(buffer);
-});
+}
 
 function findStops(buffer) {
 
