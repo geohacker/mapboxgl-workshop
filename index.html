@@ -89,7 +89,20 @@ var destinationsLayer = {
 
 // Create destinations label layer
 var destinationsLabel = {
-
+    "id": "destinationsLabel",
+    "type": "symbol",
+    "source": "destinations",
+    "layout": {
+        "symbol-placement": "line",
+        "text-field": "{route}",
+        "text-size": 12,
+        "text-offset": [0, 1]
+    },
+    "paint": {
+        "text-halo-color": "red",
+        "text-halo-width": 0.2
+    },
+    "filter": ["==", "name", ""]
 };
 
 // When the map is ready, add the layer.
@@ -99,6 +112,7 @@ map.on('style.load', function () {
     map.addLayer(stopsInnerLayer);
     map.addSource("destinations", destinationsSource);
     map.addLayer(destinationsLayer);
+    map.addLayer(destinationsLabel);
 });
 
 // Setup click handler
@@ -110,6 +124,7 @@ map.on('click', function (e) {
     }, function (err, features) {
         if (!err && features.length) {
             map.setFilter("destinations", ["==", "name", features[0].properties.name]);
+            map.setFilter("destinationsLabel", ["==", "name", features[0].properties.name]);
         } else {
             showStops(e);
         }
@@ -124,8 +139,9 @@ function showStops(e) {
         map.removeSource('buffer');
     }
 
-    // Clear destination lines if any
+    // Clear destination lines and labels if any
     map.setFilter("destinations", ["==", "name", ""]);
+    map.setFilter("destinationsLabel", ["==", "name", ""]);
 
     // Create a point object
     var point = turf.point([e.lngLat.lng, e.lngLat.lat]);
