@@ -39,8 +39,13 @@ var stopsLayer = {
     "source": "stops",
     "type": "circle",
     "paint": {
-        "circle-radius": 3,
-        "circle-color": "black"
+
+        // Zoom level interpolation for circle width
+        "circle-radius": {
+            "base": 1,
+            "stops": [[7, 1], [8, 1.2], [9, 1.3], [11, 2]]
+        },
+        "circle-color": "black",
     },
     "interactive": true
 };
