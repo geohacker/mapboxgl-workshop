@@ -55,7 +55,7 @@ var stopsInnerLayer = {
     "source": "stops",
     "type": "circle",
     "paint": {
-        "circle-radius": 10,
+        "circle-radius": 20,
         "circle-color": "red",
         "circle-opacity": 0.6,
         "circle-blur": 0.8
@@ -123,12 +123,24 @@ map.on('click', function (e) {
         layer: ["stops"]
     }, function (err, features) {
         if (!err && features.length) {
-
             clear();
+            map.setFilter("stopsInner", ["==", "name", features[0].properties.name]);
             map.setFilter("destinations", ["==", "name", features[0].properties.name]);
             map.setFilter("destinationsLabel", ["==", "name", features[0].properties.name]);
         } else {
             showStops(e);
+        }
+    });
+});
+
+// Do something on mousemove may be.
+map.on('mousemove', function (e) {
+
+    map.featuresAt(e.point, {
+        radius: 5,
+        layer: ["stops"]
+    }, function (err, features) {
+        if (!err && features.length) {
         }
     });
 });
