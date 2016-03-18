@@ -123,6 +123,8 @@ map.on('click', function (e) {
         layer: ["stops"]
     }, function (err, features) {
         if (!err && features.length) {
+
+            clear();
             map.setFilter("destinations", ["==", "name", features[0].properties.name]);
             map.setFilter("destinationsLabel", ["==", "name", features[0].properties.name]);
         } else {
@@ -133,15 +135,7 @@ map.on('click', function (e) {
 
 function showStops(e) {
 
-    // Clear previous buffer if any
-    if (map.getLayer('buffer')) {
-        map.removeLayer('buffer');
-        map.removeSource('buffer');
-    }
-
-    // Clear destination lines and labels if any
-    map.setFilter("destinationsLabel", ["==", "name", ""]);
-    map.setFilter("destinations", ["==", "name", ""]);
+    clear();
 
     // Create a point object
     var point = turf.point([e.lngLat.lng, e.lngLat.lat]);
@@ -181,6 +175,21 @@ function findStops(buffer) {
 
     map.setFilter("stopsInner", filters);
 }
+
+function clear() {
+
+    // Clear previous buffer if any
+    if (map.getLayer('buffer')) {
+        map.removeLayer('buffer');
+        map.removeSource('buffer');
+    }
+
+    // Clear filters
+    map.setFilter("destinationsLabel", ["==", "name", ""]);
+    map.setFilter("destinations", ["==", "name", ""]);
+    map.setFilter("stopsInner", ["==", "name", ""]);
+}
+
 </script>
 
 </body>
