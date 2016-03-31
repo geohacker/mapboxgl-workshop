@@ -5,12 +5,12 @@
     <title>Bus Stop Finder</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.15.0/mapbox-gl.js'></script>
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.16.0/mapbox-gl.js'></script>
     <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/turf/v2.0.0/turf.min.js'></script>
     <script src='data/stops.js'></script>
     <script src='data/destinations.js'></script>
     <link href='https://www.mapbox.com/base/latest/base.css' rel='stylesheet' />
-    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.15.0/mapbox-gl.css' rel='stylesheet' />
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.16.0/mapbox-gl.css' rel='stylesheet' />
     <style>
         body { margin:0; padding:0; }
         #map { position:absolute; top:0; bottom:0; width:100%; }
@@ -136,33 +136,30 @@ map.on('style.load', function () {
 
 // Setup click handler
 map.on('click', function (e) {
+    var x1y1 = [e.point.x - 5, e.point.y - 5];
+    var x2y2 = [e.point.x + 5, e.point.y + 5];
+    var clickedFeatures = map.queryRenderedFeatures([x1y1, x2y2], { layers: ["stops"] });
 
-    map.featuresAt(e.point, {
-        radius: 5,
-        layer: ["stops"]
-    }, function (err, features) {
-        if (!err && features.length) {
-            clear();
-            map.setFilter("stopsInner", ["==", "name", features[0].properties.name]);
-            map.setFilter("destinations", ["==", "name", features[0].properties.name]);
-            map.setFilter("destinationsLabel", ["==", "name", features[0].properties.name]);
-        } else {
-            showStops(e);
-        }
-    });
+    if (clickedFeatures.length) {
+        clear();
+        map.setFilter("stopsInner", ["==", "name", clickedFeatures[0].properties.name]);
+        map.setFilter("destinations", ["==", "name", clickedFeatures[0].properties.name]);
+    } else {
+        showStops(e);
+    }
 });
 
 // Do something on mousemove may be.
-map.on('mousemove', function (e) {
-
-    map.featuresAt(e.point, {
-        radius: 5,
-        layer: ["stops"]
-    }, function (err, features) {
-        if (!err && features.length) {
-        }
-    });
-});
+// map.on('mousemove', function (e) {
+//
+//     map.featuresAt(e.point, {
+//         radius: 5,
+//         layer: ["stops"]
+//     }, function (err, features) {
+//         if (!err && features.length) {
+//         }
+//     });
+// });
 
 function showStops(e) {
 
